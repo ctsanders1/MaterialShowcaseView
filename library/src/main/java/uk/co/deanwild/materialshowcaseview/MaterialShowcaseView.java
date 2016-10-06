@@ -73,7 +73,6 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     private boolean mSingleUse = false; // should display only once
     private PrefsManager mPrefsManager; // used to store state doe single use mode
     List<IShowcaseListener> mListeners; // external listeners who want to observe when we show and dismiss
-    private UpdateOnGlobalLayout mLayoutListener;
     private IDetachedListener mDetachedListener;
     private boolean mTargetTouchable = false;
     private boolean mDismissOnTargetTouch = true;
@@ -107,10 +106,6 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mAnimationFactory = new AnimationFactory();
 
         mListeners = new ArrayList<>();
-
-        // make sure we add a global layout listener so we can adapt to changes
-        mLayoutListener = new UpdateOnGlobalLayout();
-        getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
 
         // consume touch events
         setOnTouchListener(this);
