@@ -52,7 +52,7 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     private int mYPosition;
     private boolean mWasDismissed = false;
     private int mShapePadding = ShowcaseConfig.DEFAULT_SHAPE_PADDING;
-    private UpdateOnGlobalLayout mLayoutListener;
+
     private View mContentBox;
     private TextView mTitleTextView;
     private TextView mContentTextView;
@@ -106,10 +106,6 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mAnimationFactory = new AnimationFactory();
 
         mListeners = new ArrayList<>();
-
-        // make sure we add a global layout listener so we can adapt to changes
-        mLayoutListener = new UpdateOnGlobalLayout();
-        getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
 
         // consume touch events
         setOnTouchListener(this);
@@ -711,6 +707,9 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mAnimationFactory = null;
         mCanvas = null;
         mHandler = null;
+
+        getViewTreeObserver().removeGlobalOnLayoutListener(mLayoutListener);
+        mLayoutListener = null;
 
         if (mPrefsManager != null)
             mPrefsManager.close();
