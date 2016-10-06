@@ -73,6 +73,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     private boolean mSingleUse = false; // should display only once
     private PrefsManager mPrefsManager; // used to store state doe single use mode
     List<IShowcaseListener> mListeners; // external listeners who want to observe when we show and dismiss
+    private UpdateOnGlobalLayout mLayoutListener;
+
     private IDetachedListener mDetachedListener;
     private boolean mTargetTouchable = false;
     private boolean mDismissOnTargetTouch = true;
@@ -106,6 +108,11 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mAnimationFactory = new AnimationFactory();
 
         mListeners = new ArrayList<>();
+
+        // make sure we add a global layout listener so we can adapt to changes
+        mLayoutListener = new UpdateOnGlobalLayout();
+        getViewTreeObserver().addOnGlobalLayoutListener(mLayoutListener);
+
 
         // consume touch events
         setOnTouchListener(this);
@@ -141,8 +148,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         final int width = getMeasuredWidth();
         final int height = getMeasuredHeight();
 
-		// don't bother drawing if there is nothing to draw on
-		if(width <= 0 || height <= 0) return;
+        // don't bother drawing if there is nothing to draw on
+        if (width <= 0 || height <= 0) return;
 
         // build a new canvas if needed i.e first pass or new dimensions
         if (mBitmap == null || mCanvas == null || mOldHeight != height || mOldWidth != width) {
@@ -202,8 +209,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         if (mDismissOnTouch) {
             hide();
         }
-        if(mTargetTouchable && mTarget.getBounds().contains((int)event.getX(), (int)event.getY())){
-            if(mDismissOnTargetTouch){
+        if (mTargetTouchable && mTarget.getBounds().contains((int) event.getX(), (int) event.getY())) {
+            if (mDismissOnTargetTouch) {
                 hide();
             }
             return false;
@@ -214,11 +221,11 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
 
     private void notifyOnDisplayed() {
 
-		if(mListeners != null){
-			for (IShowcaseListener listener : mListeners) {
-				listener.onShowcaseDisplayed(this);
-			}
-		}
+        if (mListeners != null) {
+            for (IShowcaseListener listener : mListeners) {
+                listener.onShowcaseDisplayed(this);
+            }
+        }
     }
 
     private void notifyOnDismissed() {
@@ -413,25 +420,25 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mFadeDurationInMillis = fadeDurationInMillis;
     }
 
-    private void setTargetTouchable(boolean targetTouchable){
+    private void setTargetTouchable(boolean targetTouchable) {
         mTargetTouchable = targetTouchable;
     }
 
-    private void setDismissOnTargetTouch(boolean dismissOnTargetTouch){
+    private void setDismissOnTargetTouch(boolean dismissOnTargetTouch) {
         mDismissOnTargetTouch = dismissOnTargetTouch;
     }
 
     public void addShowcaseListener(IShowcaseListener showcaseListener) {
 
-		if(mListeners != null)
-			mListeners.add(showcaseListener);
+        if (mListeners != null)
+            mListeners.add(showcaseListener);
     }
 
     public void removeShowcaseListener(MaterialShowcaseSequence showcaseListener) {
 
-		if ((mListeners != null) && mListeners.contains(showcaseListener)) {
-			mListeners.remove(showcaseListener);
-		}
+        if ((mListeners != null) && mListeners.contains(showcaseListener)) {
+            mListeners.remove(showcaseListener);
+        }
     }
 
     void setDetachedListener(IDetachedListener detachedListener) {
@@ -559,20 +566,20 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
 
         /**
          * Set whether or not the target view can be touched while the showcase is visible.
-         *
+         * <p>
          * False by default.
          */
-        public Builder setTargetTouchable(boolean targetTouchable){
+        public Builder setTargetTouchable(boolean targetTouchable) {
             showcaseView.setTargetTouchable(targetTouchable);
             return this;
         }
 
         /**
          * Set whether or not the showcase should dismiss when the target is touched.
-         *
+         * <p>
          * True by default.
          */
-        public Builder setDismissOnTargetTouch(boolean dismissOnTargetTouch){
+        public Builder setDismissOnTargetTouch(boolean dismissOnTargetTouch) {
             showcaseView.setDismissOnTargetTouch(dismissOnTargetTouch);
             return this;
         }
@@ -766,7 +773,8 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
     public void hide() {
 
         /**
-         * This flag is used to indicate to onDetachedFromWindow that the showcase view was dismissed purposefully (by the user or programmatically)
+         * This flag is used to indicate to onDetachedFromWindow that the showcase view was dismissed purposefully (by
+         * the user or programmatically)
          */
         mWasDismissed = true;
 
