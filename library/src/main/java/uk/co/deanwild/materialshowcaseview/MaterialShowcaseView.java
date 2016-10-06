@@ -712,9 +712,6 @@ public class MaterialShowcaseView extends FrameLayout implements View.OnTouchLis
         mCanvas = null;
         mHandler = null;
 
-        getViewTreeObserver().removeGlobalOnLayoutListener(mLayoutListener);
-        mLayoutListener = null;
-
         if (mPrefsManager != null)
             mPrefsManager.close();
 
